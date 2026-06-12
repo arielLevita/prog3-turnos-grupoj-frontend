@@ -9,11 +9,14 @@ import MisReservas from "../pages/MisReservas.jsx";
 import MisTurnos from "../pages/MisTurnos.jsx";
 import PanelAdmin from "../pages/PanelAdmin.jsx";
 
+import RutaProtegida from "./RutaProtegida.jsx"; 
+
 const router = createBrowserRouter([
     {
         path: '/',
         element: <Main />,
         children: [
+            // --- RUTAS PÚBLICAS ---
             {
                 index: true,
                 Component: Home
@@ -34,18 +37,35 @@ const router = createBrowserRouter([
                 path: '/login',
                 Component: InicioSesion
             },
+
+            // --- RUTAS PROTEGIDAS ---
             {
-                path: '/misreservas',
-                Component: MisReservas
+                element: <RutaProtegida rolesPermitidos={[2]} />,
+                children: [
+                    {
+                        path: '/misreservas',
+                        Component: MisReservas
+                    }
+                ]
             },
             {
-                path: '/misturnos',
-                Component: MisTurnos
+                element: <RutaProtegida rolesPermitidos={[1]} />,
+                children: [
+                    {
+                        path: '/misturnos',
+                        Component: MisTurnos
+                    }
+                ]
             },
             {
-                path: '/paneladmin',
-                Component: PanelAdmin
-            },
+                element: <RutaProtegida rolesPermitidos={[3]} />,
+                children: [
+                    {
+                        path: '/paneladmin',
+                        Component: PanelAdmin
+                    }
+                ]
+            }
         ]
     }
 ]);

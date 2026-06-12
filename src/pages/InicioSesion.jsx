@@ -39,6 +39,8 @@ const InicioSesion = () => {
                     text: "Inicio de sesión exitoso.",
                     icon: "success",
                     confirmButtonColor: "#045a29",
+                    timer: 1500,
+                    timerProgressBar: true,
                     showConfirmButton: false
                 });
 

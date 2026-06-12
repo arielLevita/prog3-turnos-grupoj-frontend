@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import Swal from "sweetalert2";
-import apiUrl from "../api";
+import { fetchAuth } from "../utils/fetchAuth";
 
 const PanelMedicosAdmin = () => {
     const [medicos, setMedicos] = useState([]);
@@ -25,18 +25,10 @@ const PanelMedicosAdmin = () => {
 
     const cargarDatos = useCallback(async () => {
         try {
-            const token = localStorage.getItem("accessToken");
-            const opciones = {
-                method: "GET",
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                }
-            };
-
-            const [resMed, resEsp, resOs] = await Promise.all([
-                fetch(`${apiUrl}/v2/medicos`, opciones),
-                fetch(`${apiUrl}/v2/especialidades`, opciones),
-                fetch(`${apiUrl}/v2/obras-sociales`, opciones)
+                const [resMed, resEsp, resOs] = await Promise.all([
+                fetchAuth("/v2/medicos"),
+                fetchAuth("/v2/especialidades"),
+                fetchAuth("/v2/obras-sociales")
             ]);
 
             setMedicos(await resMed.json());
@@ -112,14 +104,7 @@ const PanelMedicosAdmin = () => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const token = localStorage.getItem("accessToken");
-
-                    const res = await fetch(`${apiUrl}/v2/medicos/${idMedico}`, {
-                        method: "DELETE",
-                        headers: {
-                            "Authorization": `Bearer ${token}`
-                        }
-                    });
+                    const res = await fetchAuth(`/v2/medicos/${idMedico}`, {method: "DELETE"});
 
                     if (res.ok) {
                         Swal.fire("¡Eliminado!", "El médico ha sido eliminado con éxito.", "success");
@@ -157,17 +142,11 @@ const PanelMedicosAdmin = () => {
         try {
             const metodo = formData.idMedico ? "PUT" : "POST";
             const url = formData.idMedico
-                ? `${apiUrl}/v2/medicos/${formData.idMedico}`
-                : `${apiUrl}/v2/medicos`;
+                ? `/v2/medicos/${formData.idMedico}`
+                : `/v2/medicos`;
 
-            const token = localStorage.getItem("accessToken");
-
-            const resMedico = await fetch(url, {
+            const resMedico = await fetchAuth(url, {
                 method: metodo,
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
                 body: JSON.stringify(payloadMedico)
             });
 
@@ -195,12 +174,8 @@ const PanelMedicosAdmin = () => {
                 }));
 
                 promesasObrasSociales.push(
-                    fetch(`${apiUrl}/v2/medicos/${idMedicoActual}/obras-sociales`, {
+                    fetchAuth(`/v2/medicos/${idMedicoActual}/obras-sociales`, {
                         method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": `Bearer ${token}`
-                        },
                         body: JSON.stringify({ obras_sociales: payloadObrasSociales })
                     })
                 );
@@ -208,12 +183,7 @@ const PanelMedicosAdmin = () => {
 
             obrasParaEliminar.forEach(idObraSocial => {
                 promesasObrasSociales.push(
-                    fetch(`${apiUrl}/v2/medicos/${idMedicoActual}/obras-sociales/${idObraSocial}`, {
-                        method: "DELETE",
-                        headers: {
-                            "Authorization": `Bearer ${token}`
-                        }
-                    })
+                    fetchAuth(`/v2/medicos/${idMedicoActual}/obras-sociales/${idObraSocial}`, {method: "DELETE"})
                 );
             });
 
