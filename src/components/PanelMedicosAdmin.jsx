@@ -25,10 +25,18 @@ const PanelMedicosAdmin = () => {
 
     const cargarDatos = useCallback(async () => {
         try {
+            const token = localStorage.getItem("accessToken");
+            const opciones = {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            };
+
             const [resMed, resEsp, resOs] = await Promise.all([
-                fetch(`${apiUrl}/v2/medicos`),
-                fetch(`${apiUrl}/v2/especialidades`),
-                fetch(`${apiUrl}/v2/obras-sociales`)
+                fetch(`${apiUrl}/v2/medicos`, opciones),
+                fetch(`${apiUrl}/v2/especialidades`, opciones),
+                fetch(`${apiUrl}/v2/obras-sociales`, opciones)
             ]);
 
             setMedicos(await resMed.json());
@@ -43,7 +51,6 @@ const PanelMedicosAdmin = () => {
         // El disable de la línea de código que sigue está porque el linter detecta que puede haber una ejecución en cascada. Ya lo probé con la herramienta de red de la consola del navegador y está todo funcionando bien.
         // eslint-disable-next-line react-hooks/set-state-in-effect
         cargarDatos();
-        console.log(obrasSociales)
     }, [cargarDatos]);
 
     const handleChange = (e) => {
@@ -105,7 +112,14 @@ const PanelMedicosAdmin = () => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const res = await fetch(`${apiUrl}/v2/medicos/${idMedico}`, { method: "DELETE" });
+                    const token = localStorage.getItem("accessToken");
+
+                    const res = await fetch(`${apiUrl}/v2/medicos/${idMedico}`, {
+                        method: "DELETE",
+                        headers: {
+                            "Authorization": `Bearer ${token}`
+                        }
+                    });
 
                     if (res.ok) {
                         Swal.fire("¡Eliminado!", "El médico ha sido eliminado con éxito.", "success");
@@ -146,9 +160,14 @@ const PanelMedicosAdmin = () => {
                 ? `${apiUrl}/v2/medicos/${formData.idMedico}`
                 : `${apiUrl}/v2/medicos`;
 
+            const token = localStorage.getItem("accessToken");
+
             const resMedico = await fetch(url, {
                 method: metodo,
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
                 body: JSON.stringify(payloadMedico)
             });
 
@@ -178,7 +197,10 @@ const PanelMedicosAdmin = () => {
                 promesasObrasSociales.push(
                     fetch(`${apiUrl}/v2/medicos/${idMedicoActual}/obras-sociales`, {
                         method: "POST",
-                        headers: { "Content-Type": "application/json" },
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`
+                        },
                         body: JSON.stringify({ obras_sociales: payloadObrasSociales })
                     })
                 );
@@ -187,7 +209,10 @@ const PanelMedicosAdmin = () => {
             obrasParaEliminar.forEach(idObraSocial => {
                 promesasObrasSociales.push(
                     fetch(`${apiUrl}/v2/medicos/${idMedicoActual}/obras-sociales/${idObraSocial}`, {
-                        method: "DELETE"
+                        method: "DELETE",
+                        headers: {
+                            "Authorization": `Bearer ${token}`
+                        }
                     })
                 );
             });
