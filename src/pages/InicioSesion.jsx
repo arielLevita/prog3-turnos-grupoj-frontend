@@ -30,9 +30,9 @@ const InicioSesion = () => {
 
             if (res.ok && data.estado) {
 
-                localStorage.setItem("accessToken", data.accessToken);
-                localStorage.setItem("refreshToken", data.refreshToken);
-                localStorage.setItem("usuario", JSON.stringify(data.usuario));
+                sessionStorage.setItem("accessToken", data.accessToken);
+                sessionStorage.setItem("refreshToken", data.refreshToken);
+                sessionStorage.setItem("usuario", JSON.stringify(data.usuario));
 
                 await Swal.fire({
                     title: "¡Bienvenido!",

@@ -3,8 +3,8 @@ import { useNavigate, Outlet } from "react-router";
 import Swal from "sweetalert2";
 
 const RutaProtegida = ({ rolesPermitidos }) => {
-    const token = localStorage.getItem("accessToken");
-    const usuarioStr = localStorage.getItem("usuario");
+    const token = sessionStorage.getItem("accessToken");
+    const usuarioStr = sessionStorage.getItem("usuario");
     const navigate = useNavigate();
 
     const usuario = usuarioStr ? JSON.parse(usuarioStr) : null;

@@ -5,8 +5,8 @@ import apiUrl from "../api";
 const Navbar = () => {
     const navigate = useNavigate();
 
-    const estaLogueado = !!localStorage.getItem("accessToken");
-    const refreshToken = localStorage.getItem("refreshToken");
+    const estaLogueado = !!sessionStorage.getItem("accessToken");
+    const refreshToken = sessionStorage.getItem("refreshToken");
 
     const handleLogout = async () => {
         try {
@@ -22,9 +22,9 @@ const Navbar = () => {
         } catch (error) {
             console.error("Error al comunicarse con el servidor durante el logout:", error);
         } finally {
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
-            localStorage.removeItem("usuario");
+            sessionStorage.removeItem("accessToken");
+            sessionStorage.removeItem("refreshToken");
+            sessionStorage.removeItem("usuario");
 
             await Swal.fire({
                 title: "Sesión finalizada",

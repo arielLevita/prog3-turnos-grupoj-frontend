@@ -13,11 +13,13 @@ const intentarRefresh = async () => {
         cancelButtonText: "Cerrar sesión",
         confirmButtonColor: "#045a29",
         cancelButtonColor: "#d33",
-        allowOutsideClick: false
+        allowOutsideClick: false,
+        timer: 60000,
+        timerProgressBar: true
     });
 
     if (result.isConfirmed) {
-        const refreshToken = localStorage.getItem("refreshToken");
+        const refreshToken = sessionStorage.getItem("refreshToken");
 
         const refreshRes = await fetch(`${apiUrl}/v2/auth/refresh`, {
             method: "POST",
@@ -28,26 +30,26 @@ const intentarRefresh = async () => {
         if (refreshRes.ok) {
             const data = await refreshRes.json();
 
-            localStorage.setItem("accessToken", data.accessToken);
+            sessionStorage.setItem("accessToken", data.accessToken);
             if (data.refreshToken) {
-                localStorage.setItem("refreshToken", data.refreshToken);
+                sessionStorage.setItem("refreshToken", data.refreshToken);
             }
 
             return data.accessToken;
         } else {
-            localStorage.clear();
+            sessionStorage.clear();
             window.location.href = "/login";
             throw new Error("Refresh token inválido o expirado");
         }
     } else {
-        localStorage.clear();
+        sessionStorage.clear();
         window.location.href = "/";
         throw new Error("Cancelado por el usuario");
     }
 };
 
 export const fetchAuth = async (endpoint, options = {}) => {
-    let token = localStorage.getItem("accessToken");
+    let token = sessionStorage.getItem("accessToken");
 
     const headers = {
         "Content-Type": "application/json",
