@@ -8,7 +8,7 @@ const Profesionales = () => {
     useEffect(() => {
         const obtenerEspecialidades = async () => {
             try {
-                const response = await fetch(`${apiUrl}/v2/especialidades`);
+                const response = await fetch(`${apiUrl}/v2/public/especialidades`);
 
                 if (!response.ok) throw new Error("Error al obtener las especialidades");
 
@@ -22,7 +22,7 @@ const Profesionales = () => {
 
         const obtenerMedicos = async () => {
             try {
-                const response = await fetch(`${apiUrl}/v2/medicos`);
+                const response = await fetch(`${apiUrl}/v2/public/medicos`);
 
                 if (!response.ok) throw new Error("Error al obtener los médicos");
 

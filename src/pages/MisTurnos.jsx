@@ -1,28 +1,18 @@
 import { useEffect, useState, useCallback } from "react";
 import { format } from "date-fns";
-import apiUrl from "../api";
+import { fetchAuth } from "../utils/fetchAuth";
 import Swal from 'sweetalert2';
 
 const MisTurnos = () => {
     const [turnos, setTurnos] = useState([]);
-
-    const MEDICO = {
-        idMedico: 1,
-        matricula: 1000,
-        descripcion: "test",
-        valorConsulta: 5000,
-        idUsuario: 1,
-        apellido: "Lopez",
-        nombres: "Marcelo",
-        email: "lopmar@correo.com",
-        idEspecialidad: 1,
-        especialidadNombre: "PEDIATRÍA",
-        obrasSocialesQueAtiende: [1, 5, 8]
-    }
+    const [medico, setMedico] = useState(null);
+    
+    const usuarioStr = sessionStorage.getItem("usuario");
+    const usuario = JSON.parse(usuarioStr);
 
     const obtenerTurnos = useCallback(async () => {
         try {
-            const response = await fetch(`${apiUrl}/v2/turnos`);
+            const response = await fetchAuth("/v2/turnos");
             if (!response.ok) throw new Error("Error al obtener los turnos");
             const turnos = await response.json();
             setTurnos(turnos);
@@ -30,6 +20,22 @@ const MisTurnos = () => {
             console.error("Error cargando los turnos:", error);
         }
     }, []);
+
+    useEffect(() => {
+        const obtenerMedicos = async () => {
+            try {
+                const response = await fetchAuth("/v2/medicos");
+                if (!response.ok) throw new Error("Error al obtener los médicos");
+                const medicos = await response.json();
+                const medicoLogueado = medicos.find((med) => med.idUsuario == usuario.idUsuario)
+                setMedico(medicoLogueado);
+            } catch (error) {
+                console.error("Error cargando los profesionales:", error);
+            }
+        };
+
+        obtenerMedicos();
+    }, [])
 
     useEffect(() => {
         // El disable de la línea de código que sigue está porque el linter detecta que puede haber una ejecución en cascada. Ya lo probé con la herramienta de red de la consola del navegador y está todo funcionando bien.
@@ -57,11 +63,8 @@ const MisTurnos = () => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const res = await fetch(`${apiUrl}/v2/turnos/${idTurnoReserva}/atendido`, {
+                    const res = await fetchAuth(`/v2/turnos/${idTurnoReserva}/atendido`, {
                         method: "PATCH",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
                         body: JSON.stringify({ atendido: true })
                     });
 
@@ -90,8 +93,7 @@ const MisTurnos = () => {
         });
     };
 
-    const turnosDelMedico = MEDICO ? turnos.filter((turno) => turno.idMedico == MEDICO.idMedico).sort((a, b) => new Date(a.fechaHora) - new Date(b.fechaHora)) : [];
-
+    const turnosDelMedico = medico ? turnos.filter((turno) => turno.idMedico == medico.idMedico).sort((a, b) => new Date(a.fechaHora) - new Date(b.fechaHora)) : [];
 
     return (
         <main>

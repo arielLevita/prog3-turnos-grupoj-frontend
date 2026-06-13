@@ -118,9 +118,30 @@ nav .login-button,
   -o-border-radius: 0.5em !important;
 }
 
-nav button:hover {
+.login-button:hover {
   filter: drop-shadow(0 0 5px rgba(var(--color-tres-rgb), 0.5));
 }
+
+.logout-button {
+  padding: 0.3em 0.8em !important;
+  font-size: 0.9rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  color: rgb(202, 0, 0) !important;
+  background-color: var(--color-seis) !important;
+  border: 2px rgb(202, 0, 0) solid !important;
+  border-radius: 0.5em !important;
+  -webkit-border-radius: 0.5em !important;
+  -moz-border-radius: 0.5em !important;
+  -ms-border-radius: 0.5em !important;
+  -o-border-radius: 0.5em !important;
+}
+
+.logout-button:hover {
+  filter: drop-shadow(0 0 5px rgba(202, 0, 0, 0.5)) !important;
+  -webkit-filter: drop-shadow(0 0 5px rgba(202, 0, 0, 0.5)) !important;
+}
+
 
 
 
