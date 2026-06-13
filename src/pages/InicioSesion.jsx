@@ -27,6 +27,7 @@ const InicioSesion = () => {
             });
 
             const data = await res.json();
+            const usuario = data.usuario;
 
             if (res.ok && data.estado) {
 
@@ -41,11 +42,23 @@ const InicioSesion = () => {
                     confirmButtonColor: "#045a29",
                     timer: 1500,
                     timerProgressBar: true,
-                    showConfirmButton: false
-                });
-
-                navigate("/paneladmin");
-
+                    showConfirmButton: false,
+                    didClose: (() => {
+                        switch (usuario.rol) {
+                            case 1:
+                                navigate("/misturnos");
+                                break;
+                            case 2:
+                                navigate("/misreservas");
+                                break;
+                            case 3:
+                                navigate("/paneladmin");
+                                break;
+                            default:
+                                break;
+                        }
+                    })
+                })
             } else {
                 Swal.fire({
                     icon: "error",

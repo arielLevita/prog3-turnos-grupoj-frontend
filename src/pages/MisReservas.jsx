@@ -3,7 +3,7 @@ import DatePicker, { registerLocale } from "react-datepicker";
 import { format } from "date-fns";
 import es from 'date-fns/locale/es';
 import "react-datepicker/dist/react-datepicker.css";
-import apiUrl from "../api";
+import { fetchAuth } from "../utils/fetchAuth";
 import Swal from 'sweetalert2';
 
 registerLocale("es", es);
@@ -15,37 +15,16 @@ const MisReservas = () => {
     const [especialidades, setEspecialidades] = useState([]);
     const [medicos, setMedicos] = useState([]);
     const [turnos, setTurnos] = useState([]);
+    const [obrasSociales, setObrasSociales] = useState([])
     const [paciente, setPaciente] = useState(null)
     const [medicosSelect, setMedicosSelect] = useState([])
 
-    const USUARIO = {
-        idPaciente: 2,
-        idUsuario: 6,
-        idObraSocial: 5,
-        apellido: "Hunk",
-        nombres: "Lorena",
-        email: "hunlor@correo.com",
-        descripcionObraSocial: "low",
-        fotoPath: ""
-    };
-
-    /* const MEDICO = {
-        idMedico: 1,
-        matricula: 1000,
-        descripcion: "test",
-        valorConsulta: 5000,
-        idUsuario: 1,
-        apellido: "Lopez",
-        nombres: "Marcelo",
-        email: "lopmar@correo.com",
-        idEspecialidad: 1,
-        especialidadNombre: "PEDIATRÍA",
-        obrasSocialesQueAtiende: [1, 5, 8]
-    } */
+    const usuarioStr = sessionStorage.getItem("usuario");
+    const usuario = JSON.parse(usuarioStr);
 
     const obtenerTurnos = useCallback(async () => {
         try {
-            const response = await fetch(`${apiUrl}/v2/turnos`);
+            const response = await fetchAuth("/v2/turnos");
             if (!response.ok) throw new Error("Error al obtener los turnos");
             const turnos = await response.json();
             setTurnos(turnos);
@@ -57,18 +36,18 @@ const MisReservas = () => {
     useEffect(() => {
         const obtenerEspecialidades = async () => {
             try {
-                const response = await fetch(`${apiUrl}/v2/especialidades`);
+                const response = await fetchAuth("/v2/especialidades");
                 if (!response.ok) throw new Error("Error al obtener las especialidades");
                 const esp = await response.json();
                 setEspecialidades(esp);
             } catch (error) {
-                console.error("Error cargando los profesionales:", error);
+                console.error("Error cargando las especialidades:", error);
             }
         };
 
         const obtenerMedicos = async () => {
             try {
-                const response = await fetch(`${apiUrl}/v2/medicos`);
+                const response = await fetchAuth("/v2/medicos");
                 if (!response.ok) throw new Error("Error al obtener los médicos");
                 const med = await response.json();
                 setMedicos(med);
@@ -77,25 +56,39 @@ const MisReservas = () => {
             }
         };
 
-        const obtenerPaciente = async () => {
+        const obtenerObrasSociales = async () => {
             try {
-                const response = await fetch(`${apiUrl}/v2/pacientes`);
-                if (!response.ok) throw new Error("Error al obtener los pacientes");
-                const pacientes = await response.json();
-                const paciente = await pacientes.find((paciente) => (paciente.idUsuario == USUARIO.idUsuario))
-                setPaciente(paciente);
+                const response = await fetchAuth("/v2/obras-sociales");
+                if (!response.ok) throw new Error("Error al obtener las obras sociales");
+                const os = await response.json();
+                setObrasSociales(os);
             } catch (error) {
                 console.error("Error cargando las obras sociales:", error);
             }
         };
 
+        const obtenerPaciente = async () => {
+            try {
+                const response = await fetchAuth("/v2/pacientes");
+                if (!response.ok) throw new Error("Error al obtener los pacientes");
+                const pacientes = await response.json();
+                const paciente = await pacientes.find((paciente) => (paciente.idUsuario == usuario.idUsuario))
+                setPaciente(paciente);
+            } catch (error) {
+                console.error("Error cargando el paciente:", error);
+            }
+        };
+
+        obtenerObrasSociales();
         obtenerEspecialidades();
         obtenerMedicos();
         obtenerPaciente();
     }, [])
 
     useEffect(() => {
-        // El disable de la línea de código que sigue está porque el linter detecta que puede haber una ejecución en cascada. Ya lo probé con la herramienta de red de la consola del navegador y está todo funcionando bien.
+        // El disable de la línea de código que sigue está porque el linter detecta que puede haber 
+        // una ejecución en cascada. Ya lo probé con la herramienta de red de la consola del navegador 
+        // y está todo funcionando bien.
         // eslint-disable-next-line react-hooks/set-state-in-effect
         obtenerTurnos();
     }, [obtenerTurnos])
@@ -107,16 +100,20 @@ const MisReservas = () => {
         setMedicosSelect(medicosSegunEspecialidad)
     }
 
-    /* const calcularValorTurno = (paciente, medico) => {
+    const calcularValorTurno = (paciente, medico) => {
         let os = obrasSociales.find((os) => os.idObraSocial == paciente.idObraSocial);
-        let valorConsulta = medico.valorConsulta;
+        let valorConsulta = Number(medico.valorConsulta);
 
-        if (medico.obrasSocialesQueAtiende.includes(paciente.idObraSocial)) {
-            valorConsulta = medico.valorConsulta * (100 - os.porcentajeDescuento) / 100;
+        let obrasSocialesQueAtiende = medico.obrasSociales
+            ? medico.obrasSociales.map((os) => Number(os.id_obra_social))
+            : [];
+
+        if (os && obrasSocialesQueAtiende.includes(Number(paciente.idObraSocial))) {
+            valorConsulta = valorConsulta * (100 - Number(os.porcentajeDescuento)) / 100;
         }
 
         return valorConsulta;
-    } */
+    }
 
     const formatearFechaTarjeta = (fechaIso) => {
         if (!fechaIso) return "";
@@ -139,7 +136,10 @@ const MisReservas = () => {
 
         Swal.fire({
             title: "¿Desea confirmar la reserva del turno?",
-            html: `Médico: ${medicoSeleccionado.nombres} ${medicoSeleccionado.apellido}.`,
+            html: `
+                <p>Médico: ${medicoSeleccionado.nombres} ${medicoSeleccionado.apellido}.</p>
+                <p>Valor de la consulta: ${calcularValorTurno(paciente, medicoSeleccionado)}.</p>
+                `,
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#045a29",
@@ -149,11 +149,8 @@ const MisReservas = () => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const res = await fetch(`${apiUrl}/v2/turnos`, {
+                    const res = await fetchAuth("/v2/turnos", {
                         method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
                         body: JSON.stringify(nuevaReserva)
                     });
 
@@ -200,9 +197,7 @@ const MisReservas = () => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const res = await fetch(`${apiUrl}/v2/turnos/${idTurnoReserva}`, {
-                        method: "DELETE",
-                    });
+                    const res = await fetchAuth(`/v2/turnos/${idTurnoReserva}`, { method: "DELETE" });
 
                     if (res.ok) {
                         await Swal.fire({
@@ -252,6 +247,11 @@ const MisReservas = () => {
         return dia !== 0 && dia !== 6;
     };
 
+    const calcularEspecialidad = (turno) => {
+        let medico = medicos?.find((med) => med.idMedico == turno.idMedico);
+        return medico.especialidadNombre;
+    }
+
     const turnosDelPaciente = paciente ? turnos.filter((turno) => turno.idPaciente == paciente.idPaciente).sort((a, b) => new Date(a.fechaHora) - new Date(b.fechaHora)) : [];
 
     return (
@@ -282,7 +282,7 @@ const MisReservas = () => {
                                         </div>
                                         <div>
                                             <div className="p-3">
-                                                <p className="m-0"><span className="fw-semibold">Especialidad: </span>acá va la esp.</p>
+                                                <p className="m-0"><span className="fw-semibold">Especialidad: </span>{calcularEspecialidad(turno)}</p>
                                                 <p className="m-0"><span className="fw-semibold">Fecha y hora: </span>{formatearFechaTarjeta(turno.fechaHora)}hs.</p>
                                                 <p className="m-0"><span className="fw-semibold">Valor de la consulta($): </span>{turno.valorTotal}</p>
                                             </div>
