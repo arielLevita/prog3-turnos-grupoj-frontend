@@ -249,10 +249,27 @@ const MisReservas = () => {
 
     const calcularEspecialidad = (turno) => {
         let medico = medicos?.find((med) => med.idMedico == turno.idMedico);
-        return medico.especialidadNombre;
+        return medico.especialidadNombre || "Cargando...";
+    }
+
+    const calcularImagenMedico = (turno) => {
+        let medico = medicos?.find((med) => med.idMedico == turno.idMedico);
+        return medico.fotoPath;
     }
 
     const turnosDelPaciente = paciente ? turnos.filter((turno) => turno.idPaciente == paciente.idPaciente).sort((a, b) => new Date(a.fechaHora) - new Date(b.fechaHora)) : [];
+
+    const isLoading = medicos.length === 0 || especialidades.length === 0 || obrasSociales.length === 0 || !paciente;
+
+    if (isLoading) {
+        return (
+            <main className="d-flex justify-content-center align-items-center" style={{ height: "50vh" }}>
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Cargando datos...</span>
+                </div>
+            </main>
+        );
+    }
 
     return (
         <main>
@@ -265,19 +282,19 @@ const MisReservas = () => {
                     </button>
                 </div>
 
-                <div className="row row-cols-1 row-cols-md-3 row-cols-lg-4 m-2">
+                <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 m-2">
                     {
                         turnosDelPaciente?.map((turno) => (
                             !turno.atendido ?
                                 <div key={turno.idTurnoReserva} className="p-2" style={{ height: 250 + 'px' }}>
                                     <div className="d-flex flex-column justify-content-between border rounded-1 shadow p-0 h-100">
                                         <div className="row g-1 border-bottom">
-                                            <div className="col-4 p-2">
-                                                <img src={turno.imagenMedico} className="img-fluid rounded-start rounded-circle" alt={`Imagen de ${turno.medicoNombre}`} />
+                                            <div className="col-4 d-flex justify-content-center align-items-center p-2">
+                                                <img src={calcularImagenMedico(turno) || "/images/default-avatar.png"} className="imagen-avatar rounded-circle" alt={`Imagen de ${turno.medicoNombre}`} />
                                             </div>
-                                            <div className="col-8 p-2">
+                                            <div className="col-8 d-flex flex-column justify-content-center p-2">
                                                 <h5 className="card-title">{turno.medicoNombre}</h5>
-                                                <p><span className="fw-semibold">Obra Social:</span> {turno.obraSocialNombre ? turno.obraSocialNombre : "Atención particular"}</p>
+                                                <p className="m-0"><span className="fw-semibold">Obra Social:</span> {turno.obraSocialNombre ? turno.obraSocialNombre : "Atención particular"}</p>
                                             </div>
                                         </div>
                                         <div>

@@ -49,7 +49,7 @@ const Profesionales = () => {
                                 <div className="accordion-item border-0" key={esp.idEspecialidad}>
                                     <h3 className="accordion-header mt-4 shadow-sm">
                                         <button
-                                            className={`accordion-button py-0 border rounded ${index !== 0 ? 'collapsed' : ''}`}
+                                            className={`accordion-button shadow py-0 border rounded ${index !== 0 ? 'collapsed' : ''}`}
                                             type="button"
                                             data-bs-toggle="collapse"
                                             data-bs-target={`#collapse-${esp.idEspecialidad}`}
@@ -72,8 +72,8 @@ const Profesionales = () => {
                                                             <div className="col" key={medico.idMedico}>
                                                                 <div className="card h-100">
                                                                     <img
-                                                                        src={medico.fotoPath || null}
-                                                                        className="card-img-top"
+                                                                        src={medico.fotoPath || "/images/default-avatar.png"}
+                                                                        className="card-img-top p-3"
                                                                         alt={`Imagen de ${medico.nombres} ${medico.apellido}`}
                                                                     /> 
                                                                     <div className="card-body">

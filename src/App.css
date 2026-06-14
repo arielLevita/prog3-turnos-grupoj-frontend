@@ -459,3 +459,8 @@ footer svg {
 .react-datepicker-wrapper {
   width: 100%;
 }
+
+.imagen-avatar {
+  height: 4rem;
+  aspect-ratio: 1;
+}
