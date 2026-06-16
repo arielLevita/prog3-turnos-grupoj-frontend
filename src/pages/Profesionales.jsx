@@ -64,7 +64,7 @@ const Profesionales = () => {
                                         className={`accordion-collapse collapse ${index === 0 ? 'show' : ''}`}
                                     >
                                         <div className="accordion-body">
-                                            <div className="row row-cols-1 row-cols-md-3 g-4">
+                                            <div className="row row-cols-1 row-cols-md-4 g-4">
                                                 {
                                                     medicos
                                                         .filter(medico => medico.idEspecialidad === esp.idEspecialidad)
