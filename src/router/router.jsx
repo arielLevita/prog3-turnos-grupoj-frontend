@@ -10,6 +10,7 @@ import MisTurnos from "../pages/MisTurnos.jsx";
 import PanelAdmin from "../pages/PanelAdmin.jsx";
 
 import RutaProtegida from "./RutaProtegida.jsx"; 
+import Registro from "../pages/Registro.jsx";
 
 const router = createBrowserRouter([
     {
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
             {
                 path: '/login',
                 Component: InicioSesion
+            },
+            {
+                path: '/registro',
+                Component: Registro
             },
 
             // --- RUTAS PROTEGIDAS ---
