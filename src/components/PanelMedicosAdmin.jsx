@@ -25,7 +25,7 @@ const PanelMedicosAdmin = () => {
 
     const cargarDatos = useCallback(async () => {
         try {
-                const [resMed, resEsp, resOs] = await Promise.all([
+            const [resMed, resEsp, resOs] = await Promise.all([
                 fetchAuth("/v2/medicos"),
                 fetchAuth("/v2/especialidades"),
                 fetchAuth("/v2/obras-sociales")
@@ -104,7 +104,7 @@ const PanelMedicosAdmin = () => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const res = await fetchAuth(`/v2/medicos/${idMedico}`, {method: "DELETE"});
+                    const res = await fetchAuth(`/v2/medicos/${idMedico}`, { method: "DELETE" });
 
                     if (res.ok) {
                         Swal.fire("¡Eliminado!", "El médico ha sido eliminado con éxito.", "success");
@@ -183,7 +183,7 @@ const PanelMedicosAdmin = () => {
 
             obrasParaEliminar.forEach(idObraSocial => {
                 promesasObrasSociales.push(
-                    fetchAuth(`/v2/medicos/${idMedicoActual}/obras-sociales/${idObraSocial}`, {method: "DELETE"})
+                    fetchAuth(`/v2/medicos/${idMedicoActual}/obras-sociales/${idObraSocial}`, { method: "DELETE" })
                 );
             });
 
@@ -206,7 +206,7 @@ const PanelMedicosAdmin = () => {
     };
 
     return (
-        <div className="tab-pane fade show active" id="medicos-tab-pane" role="tabpanel" aria-labelledby="medicos-tab" tabIndex="0">
+        <>
             <h4 className="pt-5 mt-0">{formData.idMedico ? "Editar médico" : "Agregar médico"}</h4>
 
             <form id="medicoForm" className="p-3 mb-4" onSubmit={handleSubmit}>
@@ -340,7 +340,7 @@ const PanelMedicosAdmin = () => {
                     </tbody>
                 </table>
             </div>
-        </div>
+        </>
     );
 };
 
