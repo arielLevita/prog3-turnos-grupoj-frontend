@@ -180,7 +180,7 @@ const Registro = () => {
                                                 {os.nombre}
                                             </option>
                                         ))}
-                                        <option value="0">Ninguna de las anteriores / Particular</option>
+                                        {/* <option value="0">Ninguna de las anteriores / Particular</option> */}
                                     </select>
                                 </div>
 
