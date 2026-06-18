@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, Navigate } from "react-router";
 import Main from "../layouts/Main.jsx";
 import Home from "../pages/Home.jsx";
 import Institucional from "../pages/Institucional.jsx";
@@ -8,8 +8,10 @@ import InicioSesion from "../pages/InicioSesion.jsx";
 import MisReservas from "../pages/MisReservas.jsx";
 import MisTurnos from "../pages/MisTurnos.jsx";
 import PanelAdmin from "../pages/PanelAdmin.jsx";
+import PanelMedicosAdmin from "../components/PanelMedicosAdmin.jsx";
+import PanelEspecialidadesAdmin from "../components/PanelEspecialidadesAdmin.jsx";
 
-import RutaProtegida from "./RutaProtegida.jsx"; 
+import RutaProtegida from "./RutaProtegida.jsx";
 import Registro from "../pages/Registro.jsx";
 
 const router = createBrowserRouter([
@@ -66,12 +68,42 @@ const router = createBrowserRouter([
                 element: <RutaProtegida rolesPermitidos={[3]} />,
                 children: [
                     {
-                        path: '/paneladmin',
-                        Component: PanelAdmin
+                    path: '/paneladmin',
+                    element: <PanelAdmin />,
+                    children: [
+                        {
+                            index: true,
+                            element: <Navigate to="medicos" replace />
+                        },
+                        {
+                            path: 'medicos',
+                            Component: PanelMedicosAdmin
+                        },
+                        {
+                            path: 'especialidades',
+                            Component: PanelEspecialidadesAdmin
+                        },
+                        {
+                            path: 'turnos',
+                            element: <h4 className="p-4 text-center">Panel de Turnos en construcción...</h4>
+                        },
+                        {
+                            path: 'obras-sociales',
+                            element: <h4 className="p-4 text-center">Panel de Obras Sociales en construcción...</h4>
+                        },
+                        {
+                            path: 'reservas',
+                            element: <h4 className="p-4 text-center">Panel de Reservas en construcción...</h4>
+                        },
+                        {
+                            path: 'usuarios',
+                            element: <h4 className="p-4 text-center">Panel de Usuarios en construcción...</h4>
+                        }
+                    ]
                     }
-                ]
-            }
         ]
+    }
+]
     }
 ]);
 
