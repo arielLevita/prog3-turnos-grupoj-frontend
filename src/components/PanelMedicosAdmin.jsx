@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Swal from "sweetalert2";
 import { fetchAuth } from "../utils/fetchAuth";
+import { capitalizarPalabras } from "../utils/formateador.js";
 
 const PanelMedicosAdmin = () => {
     const [medicos, setMedicos] = useState([]);
@@ -213,7 +214,7 @@ const PanelMedicosAdmin = () => {
                 <div className="row g-3">
                     <div className="col-md-2">
                         <label className="form-label m-0 mt-2">ID Médico</label>
-                        <input id="idMedico" value={formData.idMedico} type="number" className="form-control text-center" disabled />
+                        <input id="idMedico" value={formData.idMedico} placeholder="Auto" type="number" className="form-control text-center" disabled />
                     </div>
 
                     <div className="col-md-2">
@@ -231,12 +232,12 @@ const PanelMedicosAdmin = () => {
 
                     <div className="col-md-4">
                         <label className="form-label m-0 mt-2">Nombre</label>
-                        <input id="nombres" value={formData.nombres} type="text" className="form-control" disabled />
+                        <input id="nombres" value={capitalizarPalabras(formData.nombres)} type="text" className="form-control" disabled />
                     </div>
 
                     <div className="col-md-4">
                         <label className="form-label m-0 mt-2">Apellido</label>
-                        <input id="apellido" value={formData.apellido} type="text" className="form-control" disabled />
+                        <input id="apellido" value={capitalizarPalabras(formData.apellido)} type="text" className="form-control" disabled />
                     </div>
 
                     <div className="col-md-4">
@@ -260,7 +261,7 @@ const PanelMedicosAdmin = () => {
                             <option value="" disabled>Seleccionar...</option>
                             {especialidades.map((esp) => (
                                 <option key={esp.idEspecialidad} value={esp.idEspecialidad}>
-                                    {esp.nombre}
+                                    {capitalizarPalabras(esp.nombre)}
                                 </option>
                             ))}
                         </select>
@@ -284,8 +285,8 @@ const PanelMedicosAdmin = () => {
                                         checked={formData.obrasSocialesQueAcepta.includes(os.idObraSocial)}
                                         onChange={() => handleCheckboxChange(os.idObraSocial)}
                                     />
-                                    <label className="form-check-label text-uppercase" htmlFor={`obra-${os.idObraSocial}`}>
-                                        {os.nombre}
+                                    <label className="form-check-label" htmlFor={`obra-${os.idObraSocial}`}>
+                                        {capitalizarPalabras(os.nombre)}
                                     </label>
                                 </div>
                             ))}
@@ -318,8 +319,8 @@ const PanelMedicosAdmin = () => {
                     <tbody>
                         {medicos.map((medico) => (
                             <tr key={medico.idMedico}>
-                                <td>{medico.nombres} {medico.apellido}</td>
-                                <td>{medico.especialidadNombre || "—"}</td>
+                                <td>{capitalizarPalabras(medico.nombres)} {capitalizarPalabras(medico.apellido)}</td>
+                                <td>{capitalizarPalabras(medico.especialidadNombre) || "—"}</td>
                                 <td>${medico.valorConsulta}</td>
                                 <td>
                                     <button

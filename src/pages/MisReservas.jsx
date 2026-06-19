@@ -1,12 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
-import DatePicker, { registerLocale } from "react-datepicker";
 import { format } from "date-fns";
-import es from 'date-fns/locale/es';
-import "react-datepicker/dist/react-datepicker.css";
+import SelectorFecha from "../components/SelectorFecha";
 import { fetchAuth } from "../utils/fetchAuth";
 import Swal from 'sweetalert2';
-
-registerLocale("es", es);
+import { capitalizarPalabras } from "../utils/formateador.js";
 
 const MisReservas = () => {
     const [fechaSeleccionada, setFechaSeleccionada] = useState(null);
@@ -18,9 +15,6 @@ const MisReservas = () => {
     const [obrasSociales, setObrasSociales] = useState([])
     const [paciente, setPaciente] = useState(null)
     const [medicosSelect, setMedicosSelect] = useState([])
-
-    const usuarioStr = sessionStorage.getItem("usuario");
-    const usuario = JSON.parse(usuarioStr);
 
     const obtenerTurnos = useCallback(async () => {
         try {
@@ -69,6 +63,10 @@ const MisReservas = () => {
 
         const obtenerPaciente = async () => {
             try {
+                const usuarioStr = sessionStorage.getItem("usuario");
+                if (!usuarioStr) return;
+                const usuario = JSON.parse(usuarioStr);
+
                 const response = await fetchAuth("/v2/pacientes");
                 if (!response.ok) throw new Error("Error al obtener los pacientes");
                 const pacientes = await response.json();
@@ -224,27 +222,13 @@ const MisReservas = () => {
         });
     };
 
-    const setHorasYMinutos = (horas, minutos) => {
-        const date = new Date();
-        date.setHours(horas);
-        date.setMinutes(minutos);
-        return date;
-    };
-
     const handleCambioFecha = (date) => {
         setFechaSeleccionada(date);
-
         if (date) {
-            const stringFormateado = format(date, "yyyy-MM-dd HH:mm:ss");
-            setFechaString(stringFormateado);
+            setFechaString(format(date, "yyyy-MM-dd HH:mm:ss"));
         } else {
             setFechaString("");
         }
-    };
-
-    const esDiaHabil = (date) => {
-        const dia = date.getDay();
-        return dia !== 0 && dia !== 6;
     };
 
     const calcularEspecialidad = (turno) => {
@@ -293,13 +277,13 @@ const MisReservas = () => {
                                                 <img src={calcularImagenMedico(turno) || "/images/default-avatar.png"} className="imagen-avatar rounded-circle" alt={`Imagen de ${turno.medicoNombre}`} />
                                             </div>
                                             <div className="col-8 d-flex flex-column justify-content-center p-2">
-                                                <h5 className="card-title">{turno.medicoNombre}</h5>
-                                                <p className="m-0"><span className="fw-semibold">Obra Social:</span> {turno.obraSocialNombre ? turno.obraSocialNombre : "Atención particular"}</p>
+                                                <h5 className="card-title">{capitalizarPalabras(turno.medicoNombre)}</h5>
+                                                <p className="m-0"><span className="fw-semibold">Obra Social:</span> {turno.obraSocialNombre ? capitalizarPalabras(turno.obraSocialNombre) : "Atención particular"}</p>
                                             </div>
                                         </div>
                                         <div>
                                             <div className="p-3">
-                                                <p className="m-0"><span className="fw-semibold">Especialidad: </span>{calcularEspecialidad(turno)}</p>
+                                                <p className="m-0"><span className="fw-semibold">Especialidad: </span>{capitalizarPalabras(calcularEspecialidad(turno))}</p>
                                                 <p className="m-0"><span className="fw-semibold">Fecha y hora: </span>{formatearFechaTarjeta(turno.fechaHora)}hs.</p>
                                                 <p className="m-0"><span className="fw-semibold">Valor de la consulta($): </span>{turno.valorTotal}</p>
                                             </div>
@@ -369,23 +353,9 @@ const MisReservas = () => {
 
                                 <label htmlFor="fechayhora" className="form-label m-0 mt-2">3) Día y hora de la reserva</label>
                                 <div className="w-100">
-                                    <DatePicker
-                                        id="fechayhora"
-                                        selected={fechaSeleccionada}
-                                        onChange={handleCambioFecha}
-                                        showTimeSelect
-                                        timeFormat="HH:mm"
-                                        timeIntervals={30}
-                                        timeCaption="Hora"
-                                        dateFormat="dd/MM/yyyy HH:mm"
-                                        minTime={setHorasYMinutos(8, 0)}
-                                        maxTime={setHorasYMinutos(17, 0)}
-                                        className="form-control w-100"
-                                        placeholderText="Seleccione fecha y hora"
-                                        required
-                                        autoComplete="off"
-                                        locale="es"
-                                        filterDate={esDiaHabil}
+                                    <SelectorFecha
+                                        fechaSeleccionada={fechaSeleccionada}
+                                        onCambioFecha={handleCambioFecha}
                                     />
                                 </div>
                             </div>

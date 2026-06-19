@@ -2,13 +2,11 @@ import { useEffect, useState, useCallback } from "react";
 import { format } from "date-fns";
 import { fetchAuth } from "../utils/fetchAuth";
 import Swal from 'sweetalert2';
+import { capitalizarPalabras } from "../utils/formateador.js";
 
 const MisTurnos = () => {
     const [turnos, setTurnos] = useState([]);
     const [medico, setMedico] = useState(null);
-    
-    const usuarioStr = sessionStorage.getItem("usuario");
-    const usuario = JSON.parse(usuarioStr);
 
     const obtenerTurnos = useCallback(async () => {
         try {
@@ -24,6 +22,10 @@ const MisTurnos = () => {
     useEffect(() => {
         const obtenerMedicos = async () => {
             try {
+                const usuarioStr = sessionStorage.getItem("usuario");
+                if (!usuarioStr) return;
+                const usuario = JSON.parse(usuarioStr);
+
                 const response = await fetchAuth("/v2/medicos");
                 if (!response.ok) throw new Error("Error al obtener los médicos");
                 const medicos = await response.json();
@@ -111,8 +113,8 @@ const MisTurnos = () => {
                                     <div className="d-flex flex-column justify-content-between border rounded-1 shadow p-0">
                                         <div className="row g-1">
                                             <div className="p-3">
-                                                <h5 className="card-title">{turno.pacienteNombre}</h5>
-                                                <p className="m-0"><span className="fw-semibold">Obra Social:</span> {turno.obraSocialNombre ? turno.obraSocialNombre : "Atención particular"}</p>
+                                                <h5 className="card-title">{capitalizarPalabras(turno.pacienteNombre)}</h5>
+                                                <p className="m-0"><span className="fw-semibold">Obra Social:</span> {turno.obraSocialNombre ? capitalizarPalabras(turno.obraSocialNombre) : "Atención particular"}</p>
                                             </div>
                                         </div>
                                         <div>
