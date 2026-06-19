@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Swal from "sweetalert2";
-import { fetchAuth } from "../utils/fetchAuth"; // Ajustá la ruta según tu estructura
+import { fetchAuth } from "../utils/fetchAuth";
+import { capitalizarPalabras } from "../utils/formateador.js";
 
 const PanelEspecialidadesAdmin = () => {
     const [especialidades, setEspecialidades] = useState([]);
@@ -40,7 +41,7 @@ const PanelEspecialidadesAdmin = () => {
     const handleEditClick = (especialidad) => {
         setFormData({
             idEspecialidad: especialidad.idEspecialidad || especialidad.id_especialidad,
-            nombre: especialidad.nombre || especialidad.especialidadNombre || ""
+            nombre: capitalizarPalabras(especialidad.nombre) || capitalizarPalabras(especialidad.especialidadNombre) || ""
         });
     };
 
@@ -207,7 +208,7 @@ const PanelEspecialidadesAdmin = () => {
                                 return (
                                     <tr key={id}>
                                         <td>{id}</td>
-                                        <td className="text-start">{esp.nombre || esp.especialidadNombre}</td>
+                                        <td className="text-start">{capitalizarPalabras(esp.nombre) || capitalizarPalabras(esp.especialidadNombre)}</td>
                                         <td>
                                             <div className="d-flex justify-content-center gap-2">
                                                 <button

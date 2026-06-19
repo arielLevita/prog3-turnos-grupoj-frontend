@@ -74,8 +74,8 @@ const PanelMedicosAdmin = () => {
         setFormData({
             idMedico: medico.idMedico || "",
             idUsuario: medico.idUsuario || "",
-            nombres: medico.nombres || "",
-            apellido: medico.apellido || "",
+            nombres: capitalizarPalabras(medico.nombres) || "",
+            apellido: capitalizarPalabras(medico.apellido) || "",
             email: medico.email || "",
             matricula: medico.matricula || "",
             valorConsulta: medico.valorConsulta || "",
@@ -232,12 +232,12 @@ const PanelMedicosAdmin = () => {
 
                     <div className="col-md-4">
                         <label className="form-label m-0 mt-2">Nombre</label>
-                        <input id="nombres" value={capitalizarPalabras(formData.nombres)} type="text" className="form-control" disabled />
+                        <input id="nombres" value={formData.nombres} type="text" className="form-control" disabled />
                     </div>
 
                     <div className="col-md-4">
                         <label className="form-label m-0 mt-2">Apellido</label>
-                        <input id="apellido" value={capitalizarPalabras(formData.apellido)} type="text" className="form-control" disabled />
+                        <input id="apellido" value={formData.apellido} type="text" className="form-control" disabled />
                     </div>
 
                     <div className="col-md-4">

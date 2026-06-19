@@ -28,11 +28,6 @@ const PanelAdmin = () => {
                     </NavLink>
                 </li>
                 <li className="nav-item" role="presentation">
-                    <NavLink to="/paneladmin/reservas" className="nav-link fw-semibold">
-                        Reservas
-                    </NavLink>
-                </li>
-                <li className="nav-item" role="presentation">
                     <NavLink to="/paneladmin/usuarios" className="nav-link fw-semibold">
                         Usuarios
                     </NavLink>
