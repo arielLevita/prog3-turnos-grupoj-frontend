@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from "react-router"; // Asegúrate de usar react-router-dom si estás en web
+import { NavLink, Outlet } from "react-router";
 import "../dashboard.css";
 
 const PanelAdmin = () => {
