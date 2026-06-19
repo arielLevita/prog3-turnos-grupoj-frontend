@@ -15,6 +15,7 @@ import RutaProtegida from "./RutaProtegida.jsx";
 import Registro from "../pages/Registro.jsx";
 import PanelTurnosAdmin from "../components/PanelTurnosAdmin.jsx";
 import PanelObrasSocialesAdmin from "../components/PanelObrasSocialesAdmin.jsx";
+import PanelUsuariosAdmin from "../components/PanelUsuariosAdmin.jsx";
 
 const router = createBrowserRouter([
     {
@@ -95,7 +96,7 @@ const router = createBrowserRouter([
                         },
                         {
                             path: 'usuarios',
-                            element: <h4 className="p-4 text-center">Panel de Usuarios en construcción...</h4>
+                            Component: PanelUsuariosAdmin
                         }
                     ]
                     }

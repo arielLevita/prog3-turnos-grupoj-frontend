@@ -51,10 +51,13 @@ const intentarRefresh = async () => {
 export const fetchAuth = async (endpoint, options = {}) => {
     let token = sessionStorage.getItem("accessToken");
 
-    const headers = {
-        "Content-Type": "application/json",
-        ...options.headers,
-    };
+    const headers = { ...options.headers };
+
+    if (options.body instanceof FormData) {
+        delete headers["Content-Type"];
+    } else if (!headers["Content-Type"]) {
+        headers["Content-Type"] = "application/json";
+    }
 
     if (token) {
         headers["Authorization"] = `Bearer ${token}`;
@@ -70,7 +73,6 @@ export const fetchAuth = async (endpoint, options = {}) => {
     }
 
     if (response.status === 401) {
-
         if (!promesaRefresh) {
             promesaRefresh = intentarRefresh().finally(() => {
                 promesaRefresh = null;
