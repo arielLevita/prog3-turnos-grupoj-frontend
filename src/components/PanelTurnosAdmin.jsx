@@ -3,6 +3,7 @@ import Swal from "sweetalert2";
 import { fetchAuth } from "../utils/fetchAuth";
 import SelectorFecha from "./SelectorFecha";
 import { format } from "date-fns";
+import { capitalizarPalabras } from "../utils/formateador.js";
 
 const PanelTurnosAdmin = () => {
     const [pacientes, setPacientes] = useState([]);
@@ -141,7 +142,7 @@ const PanelTurnosAdmin = () => {
 
     return (
         <div className="tab-pane fade show active" id="turnos-tab-pane" role="tabpanel" aria-labelledby="turnos-tab" tabIndex="0">
-            <h4 className="pt-5 mt-0">Asignar nuevo turno administrador</h4>
+            <h4 className="pt-5 mt-0">Asignar nuevo turno</h4>
 
             <form id="turnosAdminForm" className="col-12 col-sm-10 col-md-8 col-lg-6 p-3 mb-4 mx-auto" onSubmit={handleSubmit}>
 
@@ -157,7 +158,7 @@ const PanelTurnosAdmin = () => {
                         <option value="" disabled>Seleccione un paciente...</option>
                         {pacientes.map(pac => (
                             <option key={pac.idPaciente} value={pac.idPaciente}>
-                                (Doc: {pac.documento}) — {pac.apellido}, {pac.nombres}
+                                (Doc: {pac.documento}) — {capitalizarPalabras(pac.apellido)}, {capitalizarPalabras(pac.nombres)}
                             </option>
                         ))}
                     </select>
@@ -176,7 +177,7 @@ const PanelTurnosAdmin = () => {
                             <option value="" disabled>Seleccione especialidad...</option>
                             {especialidades.map(esp => (
                                 <option key={esp.idEspecialidad} value={esp.idEspecialidad}>
-                                    {esp.nombre}
+                                    {capitalizarPalabras(esp.nombre)}
                                 </option>
                             ))}
                         </select>
@@ -197,7 +198,7 @@ const PanelTurnosAdmin = () => {
                             </option>
                             {medicosFiltrados.map(med => (
                                 <option key={med.idMedico} value={med.idMedico}>
-                                    {med.apellido}, {med.nombres}
+                                    {capitalizarPalabras(med.apellido)}, {capitalizarPalabras(med.nombres)}
                                 </option>
                             ))}
                         </select>
